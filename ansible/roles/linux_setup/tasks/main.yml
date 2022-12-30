@@ -1,48 +1,59 @@
 ---
-# - name: Verify cgroup flags are enabled
-#   lineinfile:
-#     path: /boot/cmdline.txt
-#     backrefs: yes
-#     state: present
-#     regexp: '^(.*) {{item}}(.*)$'
-#     backup: yes
-#     line: '\g<1> {{item}}\g<2>'
-#   with_items:
-#     - 'cgroup_enable=cpuset'
-#     - 'cgroup_enable=memory'
-#     - 'cgroup_memory=1'
-#   register: cgroup_flags
-#   when: "ansible_lsb.id == 'Raspbian' and ansible_kernel is version('4.6', '>=')"
-#   changed_when: cgroup_flags.rc is defined and cgroup_flags.rc != 0
-#   notify: Reboot
 
-- name: Install a python & pip
-  apt:
-    pkg:
-    - python3
-    - python3-pip
+- name: set is_pi flag setup
+  set_fact:
+    is_pi: "{{ ansible_architecture.startswith('arm') }}"
+  tags:
+    - always
 
-- name: Install bpytop
-  command: "pip3 install bpytop"
+- import_tasks: apt.yml
+  tags:
+    - apt
 
-- name: Install a common utils
-  apt:
-    pkg:
-    - zsh
-    - curl
-    - wget
-    - vim
-    - net-tools
-    - jq
-    - nfs-common
+- import_tasks: hostname.yml
+  tags:
+    - hostname
+
+- import_tasks: locale.yml
+  tags:
+    - locale
+
+- import_tasks: resolv.yml
+  tags:
+    - resolv
+
+- import_tasks: hosts.yml
+  tags:
+    - hosts
+
+- import_tasks: ssh.yml
+  tags:
+    - ssh
+
+- import_tasks: timezone.yml
+  tags:
+    - timezone
+
+- import_tasks: timesync.yml
+  tags:
+    - timesync
+
+- import_tasks: banner.yml
+  tags:
+    - banner
+
+- import_tasks: users.yml
+  tags:
+    - user
 
 - import_tasks: docker.yml
+  tags:
+    - docker
 
-# - name: Download NetData Script
-#   get_url:
-#     url: https://my-netdata.io/kickstart.sh 
-#     dest: /tmp/netdata-kickstart.sh 
-#     mode: +x
+- import_tasks: fstab.yml
+  tags:
+    - fstab
 
-# - name: Install NetData Client
-#   command: /tmp/netdata-kickstart.sh --stable-channel --disable-telemetry    
+- import_tasks: monitoring.yml
+  tags:
+    - monitoring

@@ -1,0 +1,53 @@
+---
+
+- name: disable ssh remote root login
+  lineinfile:
+    dest: "{{ ssh_sshd_config }}"
+    regexp: "^#?PermitRootLogin"
+    line: "PermitRootLogin no"
+    state: present
+  notify:
+    - restart sshd
+
+- name: enable ssh strict mode
+  lineinfile:
+    dest: "{{ ssh_sshd_config }}"
+    regexp: "^#?StrictModes"
+    line: "StrictModes yes"
+    state: present
+  notify:
+    - restart sshd
+
+- name: disable X11 forwarding
+  lineinfile:
+    dest: "{{ ssh_sshd_config }}"
+    regexp: "^#?X11Forwarding"
+    line: "X11Forwarding no"
+    state: present
+  notify:
+    - restart sshd
+
+- name: disable ssh password login
+  lineinfile:
+    dest: "{{ ssh_sshd_config }}"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - regexp: "^#?PasswordAuthentication"
+      line: "PasswordAuthentication no"
+    - regexp: "^#?ChallengeResponseAuthentication"
+      line: "ChallengeResponseAuthentication no"
+    - regexp: "^#?PermitEmptyPasswords"
+      line: "PermitEmptyPasswords no"
+  notify:
+    - restart sshd
+
+- name: set ssh allowed users to {{ ansible_user }}
+  lineinfile:
+    dest: "{{ ssh_sshd_config }}"
+    regexp: "^#?AllowUsers"
+    line: "AllowUsers {{ ansible_user }}"
+  notify:
+    - restart sshd
+  when: ansible_user != None

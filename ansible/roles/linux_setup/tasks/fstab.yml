@@ -1,0 +1,27 @@
+---
+
+- name: Make sure "/mnt/backup/" exists
+  file:
+    path: /mnt/backup
+    state: directory
+
+- name: Configuring "/mnt/backup/" in /etc/fstab
+  become: True
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    line: 192.168.0.3:/volume1/NetBackup /mnt/backup nfs rw,async,hard,intr,noexec
+    create: yes
+  notify: reboot
+
+- name: Make sure "/mnt/shared-nfs/" exists
+  file:
+    path: /mnt/shared-nfs
+    state: directory
+
+- name: Configuring "/mnt/shared-nfs/" in /etc/fstab
+  become: True
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    line: 192.168.0.3:/volume1/shared-nfs /mnt/shared-nfs nfs rw,async,hard,intr,noexec
+    create: yes
+  notify: reboot

@@ -4,12 +4,21 @@
   become: yes
   roles:
     - linux_setup
-    - create_user
-    - etc_config
   vars_files:
     - vault.yml
   tags:
-    - system
+    - setup
+
+- hosts: server:client
+  roles:
+    - role: oh_my_zsh_setup
+      users:
+        - username: james
+        - username: root
+  vars_files:
+    - vault.yml
+  tags:
+    - setup
 
 
 - hosts: localhost

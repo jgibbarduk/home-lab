@@ -30,7 +30,7 @@
   register: sources_file
 
 - name: Add Docker Apt Repo
-  shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/{{ ansible_os_family | lower }} $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
   args:
     warn: no
   when: sources_file.stat.exists == False
@@ -43,3 +43,27 @@
     - docker-ce-cli
     - containerd.io
     - docker-compose-plugin
+  notify: Start docker on boot
+
+- name: Configure sane defaults for logging (docker daemon)
+  template:
+    src: "daemon.json"
+    dest: "/etc/docker/daemon.json"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify: Restart Docker
+
+- name: Install Docker-compose
+  shell: sudo curl -L "https://github.com/docker/compose/releases/download/1.29.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  when: not is_pi 
+  tags: docker_compose
+
+- name: Install Docker-compose
+  shell: sudo curl -L "https://github.com/docker/compose-cli/releases/download/v2.0.0-beta.3/docker-compose-linux-armv7" -o /usr/local/bin/docker-compose
+  when: is_pi 
+  tags: docker_compose
+
+- name: Changing perm of /usr/local/bin/docker-compose
+  file: dest=/usr/local/bin/docker-compose mode=a+x
+  tags: docker_compose

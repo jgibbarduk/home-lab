@@ -1,0 +1,38 @@
+---
+- name: Download Anti-Gen For ZSH
+  get_url:
+    url: https://raw.githubusercontent.com/zsh-users/antigen/master/bin/antigen.zsh
+    dest: /tmp/antigen.zsh
+    mode: +x
+
+- name: Move Anti-Gen to /usr/bin
+  become: True
+  command: "mv -f /tmp/antigen.zsh /usr/bin/antigen.zsh"
+
+- name: Configuring ~/.zshrc
+  become: True
+  ansible.builtin.lineinfile:
+    path: '~{{ user.username }}/.zshrc'
+    insertbefore: BOF
+    line: |
+      # Load Antigen
+      source "/usr/bin/antigen.zsh"
+
+      # Load Antigen configurations
+      antigen init ~/.antigenrc
+  with_items: "{{ users }}"
+  when: "((user.oh_my_zsh | default({})).install | default(oh_my_zsh_install)) | bool"
+  loop_control:
+    loop_var: user
+    label: '{{ user.username }}'
+
+- name: Configuring ~/.antigenrc
+  become: True
+  template:
+    src: antigen.j2
+    dest: '~{{ user.username }}/.antigenrc'
+  with_items: "{{ users }}"
+  when: "((user.oh_my_zsh | default({})).install | default(oh_my_zsh_install)) | bool"
+  loop_control:
+    loop_var: user
+    label: '{{ user.username }}'

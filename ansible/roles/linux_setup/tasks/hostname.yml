@@ -1,0 +1,8 @@
+---
+
+- name: Configuring /etc/hostname
+  become: True
+  template:
+    src: hostname.j2
+    dest: /etc/hostname
+  notify: reboot

@@ -1,0 +1,6 @@
+---
+
+- name: Ensure GB locale exists
+  locale_gen:
+    name: en_GB.UTF-8
+    state: present

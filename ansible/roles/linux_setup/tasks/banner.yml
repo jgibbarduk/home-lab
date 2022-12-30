@@ -1,0 +1,17 @@
+---
+
+- name: add ssh banner info
+  lineinfile:
+    dest: "{{ ssh_sshd_config }}"
+    regexp: "^#?Banner"
+    line: "Banner /etc/issue.net"
+    state: present
+  notify:
+    - restart sshd
+
+- name: update ssh banner
+  template:
+    src: ssh-banner.j2
+    dest: /etc/issue.net
+  notify:
+    - restart sshd

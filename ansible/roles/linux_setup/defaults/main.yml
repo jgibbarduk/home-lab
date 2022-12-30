@@ -1,3 +1,6 @@
 ---
+
+ssh_sshd_config : /etc/ssh/sshd_config
+
 hashi_username: 'hashi'
 ssh_key: '~/.ssh/id_rsa'

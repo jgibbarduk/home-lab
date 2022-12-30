@@ -43,11 +43,11 @@
   notify:
     - restart sshd
 
-- name: set ssh allowed users to {{ ansible_user }}
+- name: set ssh allowed users to {{ ansible_user }} & {{ hashi_user }}
   lineinfile:
     dest: "{{ ssh_sshd_config }}"
     regexp: "^#?AllowUsers"
-    line: "AllowUsers {{ ansible_user }}"
+    line: "AllowUsers {{ ansible_user }} {{ hashi_user }}"
   notify:
     - restart sshd
-  when: ansible_user != None
+  when: ansible_user != None and hashi_user != None

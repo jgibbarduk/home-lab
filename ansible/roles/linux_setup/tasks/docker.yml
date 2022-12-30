@@ -20,8 +20,6 @@
 
 - name: Add Docker official GPG key
   shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-  args:
-    warn: no
   when: gpg_key.stat.exists == False
 
 - name: Check if docker sources file exists
@@ -31,8 +29,6 @@
 
 - name: Add Docker Apt Repo
   shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/{{ ansible_os_family | lower }} $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  args:
-    warn: no
   when: sources_file.stat.exists == False
 
 - name: Install a docker-ce

@@ -9,9 +9,9 @@
   become: True
   ansible.builtin.lineinfile:
     path: /etc/fstab
-    line: 192.168.0.3:/volume1/NetBackup /mnt/backup nfs rw,async,hard,intr,noexec
+    line: 192.168.50.2:/volume1/NetBackup /mnt/backup nfs rw,async,hard,intr,noexec
     create: yes
-  notify: reboot
+  notify: mount all
 
 - name: Make sure "/mnt/shared-nfs/" exists
   file:
@@ -22,6 +22,6 @@
   become: True
   ansible.builtin.lineinfile:
     path: /etc/fstab
-    line: 192.168.0.3:/volume1/shared-nfs /mnt/shared-nfs nfs rw,async,hard,intr,noexec
+    line: 192.168.50.2:/volume1/shared-nfs /mnt/shared-nfs nfs rw,async,hard,intr,noexec
     create: yes
-  notify: reboot
+  notify: mount all

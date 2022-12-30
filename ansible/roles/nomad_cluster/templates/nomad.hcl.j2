@@ -1,0 +1,51 @@
+data_dir  = "/opt/nomad"
+
+bind_addr = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}"
+
+datacenter = "dc1"
+
+{% if is_server is defined and is_server %}
+server {
+  enabled          = true
+  bootstrap_expect = 1
+  encrypt          = "{{ nomad_encryption_key }}"
+}
+{% endif %}
+
+client {
+  enabled = true
+  host_network "tailscale" {
+    cidr           = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}/32"
+    reserved_ports = "22"
+  }
+  server_join {
+    retry_join = ["{{ hostvars[groups.server.0].ansible_facts.tailscale0.ipv4.address }}"]
+  }
+}
+
+plugin "docker" {
+  config {
+    allow_privileged = true
+    volumes {
+      enabled = true
+    }
+  }
+}
+
+plugin "raw_exec" {
+  config {
+    enabled = true
+  }
+}
+
+telemetry {
+  collection_interval        = "15s"
+  disable_hostname           = true
+  prometheus_metrics         = true
+  publish_allocation_metrics = true
+  publish_node_metrics       = true
+}
+
+consul {
+  address = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8500"
+}

@@ -1,0 +1,22 @@
+datacenter = "dc1"
+data_dir   = "/opt/consul"
+encrypt    = "{{ consul_encryption_key }}"
+ui         = true
+
+{% if is_server is defined and is_server %}
+  server           = true
+  bootstrap_expect = 1
+{% endif %}
+
+bind_addr   = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}"
+client_addr = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}"
+
+ports {
+}
+
+addresses {
+}
+
+{% if is_server is not defined or (is_server is defined and not is_server) %}
+retry_join = ["{{ hostvars[groups.server.0].ansible_facts.tailscale0.ipv4.address }}"]
+{% endif %}

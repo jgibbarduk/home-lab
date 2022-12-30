@@ -20,16 +20,36 @@
   tags:
     - setup
 
+- hosts: server:client
+  become: yes
+  roles:
+    - tailscale_setup
+  vars_files:
+    - vault.yml
+  tags:
+    - setup
+    - tailscale
 
 - hosts: localhost
   roles:
     - bootstrap_hashiup
-    - consul_cluster
+  vars_files:
+    - vault.yml
+  tags:
+    - hashiup
+
+- hosts: localhost
+  roles:
     - nomad_cluster
   vars_files:
     - vault.yml
   tags:
     - nomad
+
+- hosts: localhost
+  roles:
+    - consul_cluster
+  vars_files:
+    - vault.yml
+  tags:
     - consul
-
-

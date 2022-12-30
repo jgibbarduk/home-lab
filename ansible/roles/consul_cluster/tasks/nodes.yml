@@ -1,4 +1,15 @@
 ---
+
+- name: "Set variables"
+  set_fact:
+    is_server: False
+
+- name: Generate consul.hcl config file 
+  template:
+    src: consul.hcl.j2
+    dest: /tmp/consul-{{ item }}.hcl
+  with_items: "{{ groups['client'] }}"
+
 - name: Create client and join {{groups.server.0}} with consul {{version}}
   command:
   args:
@@ -7,21 +18,18 @@
       - consul
       - install
       - --ssh-target-addr
-      - "{{hostvars[item].ansible_host}}"
+      - "{{ hostvars[item].ansible_host }}"
       - --ssh-target-key
-      - "{{ssh_key}}"
+      - "{{ ssh_key }}"
       - --ssh-target-user
-      - "{{nomad_username}}"
+      - "{{ hashi_user }}"
       - --version
-      - "{{version}}"
-      # - --encrypt
-      # - "{{gossip_key}}"
-      - --retry-join 
-      - "{{hostvars[groups.server.0].ansible_host}}"
+      - "{{ version }}"
+      - --config-file
+      - /tmp/consul-{{ item }}.hcl
   with_items: "{{ groups['client'] }}"
   when: master_created is succeeded and http_api_result is succeeded
   register: client_joined
-  notify: reboot
 
 - name: Debug report of client joined
   debug: var=client_joined

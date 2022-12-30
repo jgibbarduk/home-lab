@@ -1,4 +1,15 @@
 ---
+
+- name: "Set variables"
+  set_fact:
+    is_server: True
+
+- name: Generate nomad.hcl config file 
+  template:
+    src: nomad.hcl.j2
+    dest: /tmp/nomad-{{ item }}.hcl
+  with_items: "{{ groups['server'] }}"
+
 - name: Create master server with nomad "{{version}}"
   command:
   args:
@@ -8,15 +19,15 @@
       - install
       - --server
       - --ssh-target-addr
-      - "{{hostvars[item].ansible_host}}"
+      - "{{ hostvars[item].ansible_host }}"
       - --ssh-target-key
-      - "{{ssh_key}}"
+      - "{{ ssh_key }}"
       - --ssh-target-user
-      - "{{nomad_username}}"
+      - "{{ hashi_user }}"
       - --version
-      - "{{version}}"
-      # - --encrypt
-      # - "{{gossip_key}}"
+      - "{{ version }}"
+      - --config-file
+      - /tmp/nomad-{{ item }}.hcl
   with_items: "{{ groups['server'] }}"
   register: master_created
 
@@ -26,7 +37,7 @@
 
 - name: Check API availability of master servers
   uri:
-    url: "http://{{hostvars[item].ansible_host}}:4646/v1/agent/self"
+    url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:4646/v1/agent/self"
     method: GET
     validate_certs: False
     status_code: 200

@@ -1,0 +1,9 @@
+---
+version: "1.14.3"
+debug_master: False
+debug_nodes: False
+
+configure: True
+homedir: "/etc/consul.d"
+config: "consul.hcl"
+ssh_key: "~/.ssh/id_rsa"

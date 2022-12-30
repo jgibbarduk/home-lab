@@ -1,0 +1,26 @@
+---
+
+- hosts: server:client
+  become: yes
+  roles:
+    - linux_setup
+    - create_user
+    - etc_config
+  vars_files:
+    - vault.yml
+  tags:
+    - system
+
+
+- hosts: localhost
+  roles:
+    - bootstrap_hashiup
+    - consul_cluster
+    - nomad_cluster
+  vars_files:
+    - vault.yml
+  tags:
+    - nomad
+    - consul
+
+

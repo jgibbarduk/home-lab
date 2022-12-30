@@ -1,0 +1,19 @@
+127.0.0.1       localhost
+::1             localhost ip6-localhost ip6-loopback
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+{% for server in groups['server'] %}
+{% if inventory_hostname == server %}
+127.0.0.1       {{server}}
+{% else %}
+{{ hostvars[server]['ansible_host']}}       {{server}}
+{% endif %}
+{% endfor %}
+{% for client in groups['client'] %}
+{% if inventory_hostname == client %}
+127.0.0.1       {{client}}
+{% else %}
+{{ hostvars[client]['ansible_host'] }}       {{client}}
+{% endif %}
+{% endfor %}

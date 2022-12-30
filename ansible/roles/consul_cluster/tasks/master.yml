@@ -1,0 +1,45 @@
+---
+- name: Create master server with consul "{{version}}"
+  command:
+  args:
+    argv:
+      - hashi-up
+      - consul
+      - install
+      - --server
+      - --client-addr
+      - 0.0.0.0
+      - --ssh-target-addr
+      - "{{hostvars[item].ansible_host}}"
+      - --ssh-target-key
+      - "{{ssh_key}}"
+      - --ssh-target-user
+      - "{{nomad_username}}"
+      - --version
+      - "{{version}}"
+      # - --encrypt
+      # - "{{gossip_key}}"
+  with_items: "{{ groups['server'] }}"
+  register: master_created
+
+- name: Debug report of master creation
+  debug: var=master_created
+  when: debug_master or master_created is failed
+
+- name: Check API availability of master servers
+  uri:
+    url: "http://{{hostvars[item].ansible_host}}:8500/v1/catalog/datacenters"
+    method: GET
+    validate_certs: False
+    status_code: 200
+    body_format: json
+  with_items: "{{ groups['server'] }}"
+  register: http_api_result
+  retries: 6
+  delay: 15
+  until: http_api_result is not failed
+  when: master_created is succeeded
+
+- name: Debug report of API availability
+  debug: var=http_api_result
+  when: http_api_result is failed or debug_master

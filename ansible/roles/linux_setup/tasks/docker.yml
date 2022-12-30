@@ -1,0 +1,45 @@
+---
+
+- name: Install a docker pre-reqs
+  apt:
+    pkg:
+    - ca-certificates 
+    - curl
+    - gnupg
+    - lsb-release
+
+- name: Make sure "/etc/apt/keyrings" exists
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+
+- name: Check if docker gpg key exists
+  stat:
+    path: /etc/apt/keyrings/docker.gpg
+  register: gpg_key
+
+- name: Add Docker official GPG key
+  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  args:
+    warn: no
+  when: gpg_key.stat.exists == False
+
+- name: Check if docker sources file exists
+  stat:
+    path: /etc/apt/sources.list.d/docker.list
+  register: sources_file
+
+- name: Add Docker Apt Repo
+  shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  args:
+    warn: no
+  when: sources_file.stat.exists == False
+
+- name: Install a docker-ce
+  apt:
+    update_cache: yes
+    pkg:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    - docker-compose-plugin

@@ -1,0 +1,26 @@
+---
+- name: Create hashi group
+  group:
+    name: "{{hashi_username}}"
+    system: yes
+    state: present
+
+- name: Make hashi group sudoer
+  copy:
+    content: '%{{hashi_username}} ALL=(ALL:ALL) NOPASSWD:ALL'
+    dest: '/etc/sudoers.d/0pw4{{hashi_username}}'
+    mode: 0440
+
+- name: Create hashi user
+  user:
+    name: "{{hashi_username}}"
+    group: "{{hashi_username}}"
+    system: yes
+    password: '!'
+    state: present
+
+- name: Set SSH key
+  authorized_key:
+    user: "{{hashi_username}}"
+    key: "{{ lookup('file', ssh_key + '.pub') }}"
+    state: present

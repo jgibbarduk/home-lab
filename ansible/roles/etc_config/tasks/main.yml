@@ -1,0 +1,41 @@
+---
+
+- name: Configuring /etc/systemd/timesyncd.conf
+  become: True
+  template:
+    src: timesyncd.j2
+    dest: /etc/systemd/timesyncd.conf
+  notify: Timesyncd
+
+- name: Configuring /etc/hostname
+  become: True
+  template:
+    src: hostname.j2
+    dest: /etc/hostname
+  notify: Reboot
+
+- name: Make sure "/mnt/backup/" exists
+  file:
+    path: /mnt/backup
+    state: directory
+
+- name: Configuring /etc/fstab
+  become: True
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    line: 192.168.0.3:/volume1/rancher-nfs /mnt/backup nfs rw,async,hard,intr,noexec
+    create: yes
+
+- name: Configuring /etc/resolv.conf
+  become: True
+  template:
+    src: resolv.j2
+    dest: /etc/resolv.conf
+  notify: Reboot
+
+- name: Configuring /etc/hosts
+  become: True
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
+  notify: Reboot

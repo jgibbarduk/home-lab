@@ -49,3 +49,19 @@ telemetry {
 consul {
   address = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8500"
 }
+
+{% if is_server is defined and is_server %}
+vault {
+  enabled = true
+  address = "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200"
+  task_token_ttl = "1h"
+  token = "{{ vault_root_token }}"
+  namespace = "nomad"
+}
+{% else %}
+vault {
+  enabled = true
+  address = "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200"
+}
+{% endif %}
+

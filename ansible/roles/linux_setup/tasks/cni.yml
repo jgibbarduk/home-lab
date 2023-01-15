@@ -1,0 +1,24 @@
+---
+
+- name: Check if cni plugins exists
+  stat:
+    path: /opt/cni/bin/loopback
+  register: cni_plugins
+
+- name: Make sure "/opt/cni/bin" exists
+  file:
+    path: /opt/cni/bin
+    state: directory
+  when: cni_plugins.stat.exists == False
+
+- name: Download CNI plugins
+  shell: curl -L -o cni-plugins.tgz "https://github.com/containernetworking/plugins/releases/download/v1.0.0/cni-plugins-linux-$( [ $(uname -m) = aarch64 ] && echo arm64 || echo amd64)"-v1.0.0.tgz
+  args:
+    chdir: /tmp
+  when: cni_plugins.stat.exists == False
+
+- name: Install CNI plugins
+  shell: tar -C /opt/cni/bin -xzf cni-plugins.tgz
+  args:
+    chdir: /tmp
+  when: cni_plugins.stat.exists == False

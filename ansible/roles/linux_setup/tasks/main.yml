@@ -61,3 +61,7 @@
 - import_tasks: monitoring.yml
   tags:
     - monitoring
+
+- import_tasks: cni.yml
+  tags:
+    - cni

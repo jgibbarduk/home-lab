@@ -53,3 +53,11 @@
     - vault.yml
   tags:
     - consul
+
+- hosts: localhost
+  roles:
+    - vault_cluster
+  vars_files:
+    - vault.yml
+  tags:
+    - vault

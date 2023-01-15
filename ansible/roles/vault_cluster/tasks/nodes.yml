@@ -1,12 +1,22 @@
 ---
-- name: Create client and join {{groups.server.0}} with nomad {{version}}
+
+- name: "Set variables"
+  set_fact:
+    is_server: True
+
+- name: Generate vault.hcl config file 
+  template:
+    src: vault.hcl.j2
+    dest: /tmp/vault-{{ item }}.hcl
+  with_items: "{{ groups['client'] }}"
+
+- name: Create server with vault "{{version}}"
   command:
   args:
     argv:
       - hashi-up
-      - nomad
+      - vault
       - install
-      - --client
       - --ssh-target-addr
       - "{{ hostvars[item].ansible_host }}"
       - --ssh-target-key
@@ -15,15 +25,40 @@
       - "{{ hashi_user }}"
       - --version
       - "{{ version }}"
-      # - --encrypt
-      # - "{{gossip_key}}"
-      - --retry-join 
-      - "{{hostvars[groups.server.0].ansible_host}}"
+      - --config-file
+      - /tmp/vault-{{ item }}.hcl
   with_items: "{{ groups['client'] }}"
-  when: master_created is succeeded and http_api_result is succeeded
-  register: client_joined
-  notify: reboot
+  register: master_created
 
-- name: Debug report of client joined
-  debug: var=client_joined
-  when: client_joined is failed or debug_nodes
+- name: Debug report of master creation
+  debug: var=master_created
+  when: debug_master or master_created is failed
+
+- name: Check API availability of master servers
+  uri:
+    url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200/v1/sys/health"
+    method: GET
+    validate_certs: False
+    status_code: 200, 201, 503
+    body_format: json
+  with_items: "{{ groups['server'] }}"
+  register: http_api_result
+  retries: 6
+  delay: 15
+  until: http_api_result is not failed
+  when: master_created is succeeded
+
+- name: Debug report of API availability
+  debug: var=http_api_result
+  when: http_api_result is failed or debug_master
+
+- name: Unseal Vault server via API
+  uri:
+    url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200/v1/sys/unseal"
+    method: POST
+    validate_certs: False
+    status_code: 200
+    body_format: json
+    body: "{ \"key\": \"{{ vault_master_key }}\" }"
+  with_items: "{{ groups['client'] }}"
+  when: http_api_result is succeeded

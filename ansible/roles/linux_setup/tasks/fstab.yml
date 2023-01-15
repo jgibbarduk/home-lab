@@ -9,7 +9,7 @@
   become: True
   ansible.builtin.lineinfile:
     path: /etc/fstab
-    line: 192.168.50.2:/volume1/NetBackup /mnt/backup nfs rw,async,hard,intr,noexec
+    line: 100.91.185.3:/volume1/NetBackup /mnt/backup nfs rw,async,hard,intr,noexec
     create: yes
   notify: mount all
 
@@ -22,6 +22,6 @@
   become: True
   ansible.builtin.lineinfile:
     path: /etc/fstab
-    line: 192.168.50.2:/volume1/shared-nfs /mnt/shared-nfs nfs rw,async,hard,intr,noexec
+    line: 100.91.185.3:/volume1/shared-nfs /mnt/shared-nfs nfs rw,async,hard,intr,noexec
     create: yes
   notify: mount all

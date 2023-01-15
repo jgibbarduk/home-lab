@@ -1,12 +1,22 @@
 ---
-- name: Create master server with nomad "{{version}}"
+
+- name: "Set variables"
+  set_fact:
+    is_server: True
+
+- name: Generate vault.hcl config file 
+  template:
+    src: vault.hcl.j2
+    dest: /tmp/vault-{{ item }}.hcl
+  with_items: "{{ groups['server'] }}"
+
+- name: Create master server with vault "{{version}}"
   command:
   args:
     argv:
       - hashi-up
-      - nomad
+      - vault
       - install
-      - --server
       - --ssh-target-addr
       - "{{ hostvars[item].ansible_host }}"
       - --ssh-target-key
@@ -15,8 +25,8 @@
       - "{{ hashi_user }}"
       - --version
       - "{{ version }}"
-      # - --encrypt
-      # - "{{gossip_key}}"
+      - --config-file
+      - /tmp/vault-{{ item }}.hcl
   with_items: "{{ groups['server'] }}"
   register: master_created
 
@@ -26,10 +36,10 @@
 
 - name: Check API availability of master servers
   uri:
-    url: "http://{{hostvars[item].ansible_host}}:4646/v1/agent/self"
+    url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200/v1/sys/health"
     method: GET
     validate_certs: False
-    status_code: 200
+    status_code: 200, 201, 503
     body_format: json
   with_items: "{{ groups['server'] }}"
   register: http_api_result
@@ -41,3 +51,14 @@
 - name: Debug report of API availability
   debug: var=http_api_result
   when: http_api_result is failed or debug_master
+
+- name: Unseal Vault server via API
+  uri:
+    url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200/v1/sys/unseal"
+    method: POST
+    validate_certs: False
+    status_code: 200
+    body_format: json
+    body: "{ \"key\": \"{{ vault_master_key }}\" }"
+  with_items: "{{ groups['server'] }}"
+  when: http_api_result is succeeded

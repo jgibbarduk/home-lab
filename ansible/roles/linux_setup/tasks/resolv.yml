@@ -5,4 +5,4 @@
   template:
     src: resolv.j2
     dest: /etc/resolv.conf
-  notify: reboot
+  # notify: restart networking

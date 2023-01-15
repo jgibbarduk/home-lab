@@ -12,6 +12,9 @@ job "http-echo" {
           "-listen", ":${NOMAD_PORT_http}",
           "-text", "Hello and welcome to ${NOMAD_IP_http} running on port ${NOMAD_PORT_http}",
         ]
+        volumes = [
+        "/mnt/shared-nfs/test:/opt/test"
+      ]
       }
 
       resources {
@@ -21,6 +24,8 @@ job "http-echo" {
         }
       }
 
+
+
       service {
         name = "http-echo"
         port = "http"
@@ -29,7 +34,7 @@ job "http-echo" {
           "traefik.enable=true",
           "traefik.http.routers.http-echo.entrypoints=https",
           "traefik.http.routers.http-echo.rule=Host(`echo.dingous.net`)",
-          "traefik.http.routers.http-echo.tls.certResolver=awsResolver"
+          "traefik.http.routers.http-echo.tls.certResolver=awsresolver"
         
         ]
 

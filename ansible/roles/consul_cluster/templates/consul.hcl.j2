@@ -12,6 +12,7 @@ bind_addr   = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}"
 client_addr = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}"
 
 ports {
+  grpc = 8502
 }
 
 addresses {

@@ -5,5 +5,5 @@
 
 # Configure the Nomad provider
 provider "nomad" {
-  address = "http://192.168.50.216:4646"
+  address = "https://nomad.dingous.net"
 }

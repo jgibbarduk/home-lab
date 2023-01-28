@@ -28,11 +28,6 @@ job "homer" {
 				]
 			}
 
-			// template {
-			// 	data = "{{ key `homer/config.yml` }}"
-			// 	destination = "local/config.yml"
-			// }
-
 			service {
 				name = "homer"
 				port = "homer"
@@ -42,7 +37,7 @@ job "homer" {
                     "traefik.http.routers.homer.entrypoints=https",
 					"traefik.http.routers.homer.rule=Host(`homer.dingous.net`)",
 					"traefik.http.routers.homer.tls.certResolver=awsresolver",
-                    "traefik.http.routers.homer.middlewares=internal-whitelist@file",
+                    "traefik.http.routers.homer.middlewares=authelia@file",
 				]
 			}
 		}

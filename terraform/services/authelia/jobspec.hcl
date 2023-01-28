@@ -45,7 +45,7 @@ job "authelia" {
 
         volumes = [
 					"/mnt/shared-nfs/authelia/config:/config",
-                    "/mnt/shared-nfs/authelia/secrets:/config/secrets"
+          "/mnt/shared-nfs/authelia/secrets:/config/secrets"
 				]
       }
 

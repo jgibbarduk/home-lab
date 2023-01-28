@@ -3,23 +3,22 @@ job "metrics" {
 
     group "prometheus" {
         network {
-            mode = "bridge"
+            port "prometheus" {
+                to = 9090
+                host_network = "tailscale"
+            }
         }
 
         service {
             name = "prometheus"
-            port = "9090"
-
-            connect {
-                sidecar_service {}
-            }
-
+            port = "prometheus"
         }
 
         task "web" {
             driver = "docker"
             config {
                 image = "prom/prometheus:latest"
+                ports = ["prometheus"]
             }
         }
     }
@@ -27,9 +26,7 @@ job "metrics" {
 
     group "grafana" {
         network {
-            mode ="bridge"
-            port "http" {
-                static = 3000
+            port "grafana" {
                 to     = 3000
                 host_network = "tailscale"
             }
@@ -37,28 +34,28 @@ job "metrics" {
 
         service {
             name = "grafana"
-            port = "3000"
+            port = "grafana"
 
-            connect {
-                    sidecar_service {
-                    proxy {
-                        upstreams {
-                            destination_name = "prometheus"
-                            local_bind_port  = 9090
-                        }
-                    }
-                }
-            }
+            // connect {
+            //         sidecar_service {
+            //         proxy {
+            //             upstreams {
+            //                 destination_name = "prometheus"
+            //                 local_bind_port  = 9090
+            //             }
+            //         }
+            //     }
+            // }
 
 
             tags = [
                 "traefik.enable=true",
-                "traefik.connect=true",
-                "traefik.consulcatalog.connect=true",
+                // "traefik.connect=true",
+                // "traefik.consulcatalog.connect=true",
                 "traefik.http.routers.grafana.entrypoints=https",
                 "traefik.http.routers.grafana.rule=Host(`grafana.dingous.net`)",
                 "traefik.http.routers.grafana.tls.certResolver=awsresolver",
-                "traefik.http.routers.grafana.middlewares=internal-whitelist@file",
+                "traefik.http.routers.grafana.middlewares=authelia@file",
 
             ]
             // check {
@@ -73,17 +70,23 @@ job "metrics" {
             driver = "docker"
             config {
                 image = "grafana/grafana:latest"
-                mounts = [
-                    {
-                        type = "bind"
-                        target = "/var/lib/grafana"
-                        source = "/mnt/shared-nfs/grafana/data"
-                        readonly = false
-                        bind_options {
-                        propagation = "rshared"
-                        }
-                    }
+                ports = ["grafana"]
+                volumes = [
+                    "/mnt/shared-nfs/grafana/data:/var/lib/grafana",
+                    "/mnt/shared-nfs/grafana/config:/etc/grafana"
                 ]
+
+                // mounts = [
+                //     {
+                //         type = "bind"
+                //         target = "/var/lib/grafana"
+                //         source = "/mnt/shared-nfs/grafana/data"
+                //         readonly = false
+                //         bind_options {
+                //             propagation = "rshared"
+                //         }
+                //     }
+                // ]
 
             }
         }

@@ -7,9 +7,9 @@ resource "nomad_job" "metrics" {
   jobspec = file("${path.module}/services/metrics/jobspec.hcl")
 }
 
-# resource "nomad_job" "homer" {
-#   jobspec = file("${path.module}/services/homer/jobspec.hcl")
-# }
+resource "nomad_job" "homer" {
+  jobspec = file("${path.module}/services/homer/jobspec.hcl")
+}
 
 resource "nomad_job" "dashy" {
   jobspec = file("${path.module}/services/dashy/jobspec.hcl")
@@ -22,6 +22,18 @@ resource "nomad_job" "authelia" {
 resource "nomad_job" "route53dynip" {
   jobspec = file("${path.module}/services/route53dynip/jobspec.hcl")
 }
+
+resource "nomad_job" "website" {
+  jobspec = file("${path.module}/services/personal-site/jobspec.hcl")
+}
+resource "nomad_job" "blog" {
+  jobspec = file("${path.module}/services/personal-blog/jobspec.hcl")
+}
+
+resource "nomad_job" "code-server" {
+  jobspec = file("${path.module}/services/code-server/jobspec.hcl")
+}
+
 
 # resource "nomad_job" "nfs_controller" {
 #   jobspec = file("${path.module}/storage/nfs-csi/controller.nomad")

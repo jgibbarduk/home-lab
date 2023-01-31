@@ -39,7 +39,7 @@ job "personal-site" {
                     "traefik.http.routers.website.entrypoints=https",
 					"traefik.http.routers.website.rule=Host(`www.jgibbard.me.uk`)",
 					"traefik.http.routers.website.tls.certResolver=awsresolver",
-					// "traefik.http.routers.website.middlewares=authelia@file",
+					"traefik.http.routers.website.middlewares=authelia-jgibbard@file",
 				]
 			}
 		}

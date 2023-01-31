@@ -11,12 +11,16 @@ resource "nomad_job" "homer" {
   jobspec = file("${path.module}/services/homer/jobspec.hcl")
 }
 
-resource "nomad_job" "dashy" {
-  jobspec = file("${path.module}/services/dashy/jobspec.hcl")
-}
+# resource "nomad_job" "dashy" {
+#   jobspec = file("${path.module}/services/dashy/jobspec.hcl")
+# }
 
 resource "nomad_job" "authelia" {
-  jobspec = file("${path.module}/services/authelia/jobspec.hcl")
+  jobspec = file("${path.module}/services/authelia/dingous.hcl")
+}
+
+resource "nomad_job" "authelia-jgibbard" {
+  jobspec = file("${path.module}/services/authelia/jgibbard.hcl")
 }
 
 resource "nomad_job" "route53dynip" {
@@ -33,6 +37,11 @@ resource "nomad_job" "blog" {
 resource "nomad_job" "code-server" {
   jobspec = file("${path.module}/services/code-server/jobspec.hcl")
 }
+
+# resource "nomad_job" "drone" {
+#   jobspec = file("${path.module}/services/drone/jobspec.hcl")
+# }
+
 
 
 # resource "nomad_job" "nfs_controller" {

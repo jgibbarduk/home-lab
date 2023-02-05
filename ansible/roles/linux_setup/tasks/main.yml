@@ -65,3 +65,7 @@
 - import_tasks: cni.yml
   tags:
     - cni
+
+- import_tasks: cockpit.yml
+  tags:
+    - cockpit

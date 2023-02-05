@@ -48,6 +48,8 @@ telemetry {
 
 consul {
   address = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8500"
+  client_auto_join = false
+  server_auto_join = false
 }
 
 {% if is_server is defined and is_server %}

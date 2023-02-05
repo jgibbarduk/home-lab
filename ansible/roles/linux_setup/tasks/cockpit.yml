@@ -1,0 +1,24 @@
+---
+
+- name: Check if backports apt source exists
+  stat:
+    path: /etc/apt/sources.list.d/backports.list
+  register: apt_source
+
+- name: Create backports apt source (debian)
+  shell: echo "deb http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main" > /etc/apt/sources.list.d/backports.list
+  when: apt_source.stat.exists == False and ansible_distribution | lower == 'debian'
+
+- name: Update apt cache and upgrade
+  become: yes
+  apt:
+    update_cache: yes
+    upgrade: "yes"
+
+- name: Install cockpit
+  become: yes
+  apt:
+      name: "{{ ansible_distribution_release }}-backports"
+      name: "cockpit"
+
+ 

@@ -61,3 +61,11 @@
     - vault.yml
   tags:
     - vault
+
+- hosts: server:client
+  roles:
+    - ssh_key_setup
+  vars_files:
+    - vault.yml
+  tags:
+    - ssh_keys

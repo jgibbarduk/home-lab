@@ -1,0 +1,39 @@
+---
+
+- name: Check if ssh keys exists
+  stat:
+    path: /tmp/id_rsa
+  register: ssh_keys
+  delegate_to: localhost
+  run_once: true
+
+- name: SSH KeyGen command
+  shell: ssh-keygen -q -b 2048 -t rsa -N "" -C "Cockpit SSH Key" -f /tmp/id_rsa
+  when: ssh_keys.stat.exists == False
+  delegate_to: localhost
+  run_once: true
+
+- name: Check if ssh keys exists (on server)
+  stat:
+    path: "/home/{{ ansible_user }}/.ssh/id_rsa"
+  register: server_ssh_keys
+  when: ansible_hostname == 'nomad-server'
+
+- name: copy ssh private keys for system provisioning
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.key_file }}"
+    owner: "{{ ansible_user }}" 
+    group: "{{ ansible_user }}"
+    mode: 0600
+  with_items:
+    - { src: "/tmp/id_rsa", key_file: "/home/{{ ansible_user }}/.ssh/id_rsa" }
+  when: ansible_hostname == 'nomad-server' and server_ssh_keys.stats.exist == False
+
+
+- name: Copy the key add to authorized_keys using Ansible module
+  authorized_key:
+    user: "{{ ansible_user }}"
+    state: present
+    key: "{{ lookup('file','/tmp/id_rsa.pub')}}"
+  when: ansible_hostname != 'nomad-server' 

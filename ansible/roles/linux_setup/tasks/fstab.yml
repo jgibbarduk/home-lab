@@ -25,3 +25,16 @@
     line: 100.91.185.3:/volume1/shared-nfs /mnt/shared-nfs nfs rw,async,hard,intr,noexec
     create: yes
   notify: mount all
+
+- name: Make sure "/mnt/Development/" exists
+  file:
+    path: /mnt/Development
+    state: directory
+
+- name: Configuring "/mnt/Development/" in /etc/fstab
+  become: True
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    line: 100.91.185.3:/volume1/Development /mnt/Development nfs rw,async,hard,intr,noexec
+    create: yes
+  notify: mount all

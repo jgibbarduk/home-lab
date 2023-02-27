@@ -5,11 +5,19 @@
     name: ssh
     state: restarted
 
+- name: restart bind9
+  service:
+    name: bind9
+    state: restarted
+
 - name: reload systemctl
   command: systemctl daemon-reload
 
 - name: mount all
-  command: mount -a
+  command: "{{ item }}"
+  with_items: 
+    - "umount -a"
+    - "mount -a"
 
 - name: reboot
   reboot:

@@ -1,0 +1,35 @@
+---
+
+- name: Install dependencies
+  become: yes
+  apt:
+      name: "{{ packages }}"
+      update_cache: yes
+      upgrade: "yes"
+  vars:
+      packages:
+        - bind9
+        - bind9utils
+        - bind9-doc
+
+
+- name: add default zone
+  lineinfile:
+    dest: /etc/bind/named.conf.default-zones
+    line: |
+      zone "consul" IN {
+        type forward;
+        forward only;
+        forwarders { 100.93.151.41 port 8600; };
+      };
+    state: present
+  notify:
+    - restart bind9
+
+
+- name: update named.conf.options
+  template:
+    src: named.conf.options.j2
+    dest: /etc/bind/named.conf.options
+  notify:
+    - restart bind9

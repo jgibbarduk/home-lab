@@ -13,7 +13,7 @@ job "code-server" {
 			}
 		}
 
-		task "lister-shared-nfs" {
+		task "lister-development" {
 			driver = "docker"
 
 			env {
@@ -29,7 +29,7 @@ job "code-server" {
 				ports = ["codeserver"]
 
 				volumes = [
-					"/mnt/shared-nfs:/config/workspace"
+					"/mnt/Development:/config"
 				]
 			}
 
@@ -39,10 +39,10 @@ job "code-server" {
 
 				tags = [
 					"traefik.enable=true",
-                    "traefik.http.routers.shared-code-server.entrypoints=https",
-					"traefik.http.routers.shared-code-server.rule=Host(`shared.code.dingous.net`)",
-					"traefik.http.routers.shared-code-server.tls.certResolver=awsresolver",
-					"traefik.http.routers.shared-code-server.middlewares=authelia@file",
+                    "traefik.http.routers.dev-code-server.entrypoints=https",
+					"traefik.http.routers.dev-code-server.rule=Host(`dev.dingous.net`)",
+					"traefik.http.routers.dev-code-server.tls.certResolver=awsresolver",
+					"traefik.http.routers.dev-code-server.middlewares=authelia@file",
 					"traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
 				]
 			}

@@ -23,7 +23,7 @@ job "route53dynip" {
 
 			template {
 				data = <<EOF
-      			AWS_ACCESS_KEY_ID = "{{with secret "kv/secret/aws/route53"}}{{.Data.data.aws_access_key_id}}{{end}}"
+				AWS_ACCESS_KEY_ID = "{{with secret "kv/secret/aws/route53"}}{{.Data.data.aws_access_key_id}}{{end}}"
 				AWS_SECRET_ACCESS_KEY = "{{with secret "kv/secret/aws/route53"}}{{.Data.data.aws_secret_access_key}}{{end}}"
 				EOF
 
@@ -50,7 +50,7 @@ job "route53dynip" {
 
 			template {
 				data = <<EOF
-      			AWS_ACCESS_KEY_ID = "{{with secret "kv/secret/aws/route53"}}{{.Data.data.aws_access_key_id}}{{end}}"
+				AWS_ACCESS_KEY_ID = "{{with secret "kv/secret/aws/route53"}}{{.Data.data.aws_access_key_id}}{{end}}"
 				AWS_SECRET_ACCESS_KEY = "{{with secret "kv/secret/aws/route53"}}{{.Data.data.aws_secret_access_key}}{{end}}"
 				EOF
 

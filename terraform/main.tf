@@ -33,3 +33,7 @@ resource "nomad_job" "blog" {
 resource "nomad_job" "code-server" {
   jobspec = file("${path.module}/services/code-server/jobspec.hcl")
 }
+
+resource "nomad_job" "gitea" {
+  jobspec = file("${path.module}/services/gitea/jobspec.hcl")
+}

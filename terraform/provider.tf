@@ -5,5 +5,5 @@
 
 # Configure the Nomad provider
 provider "nomad" {
-  address = "http://nomad-server.tail9bd04.ts.net:4646"  
+  address = "http://nomad-server.tail9bd04.ts.net:4646"
 }

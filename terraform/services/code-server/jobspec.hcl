@@ -19,7 +19,7 @@ job "code-server" {
 			env {
 				PORT = "${NOMAD_PORT_codeserver}"
 				// DEFAULT_WORKSPACE = "/config/workspace"
-				PROXY_DOMAIN = "dev.dingous.net"
+				// PROXY_DOMAIN = "dev.dingous.net"
 				PUID = 1000
       			PGID = 1000
 				TZ = "Europe/London"

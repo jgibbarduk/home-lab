@@ -42,7 +42,7 @@ job "gitea" {
                     "traefik.http.routers.gitea.entrypoints=https",
 					"traefik.http.routers.gitea.rule=Host(`git.dingous.net`)",
 					"traefik.http.routers.gitea.tls.certResolver=awsresolver",
-					"traefik.http.routers.gitea.middlewares=authelia@file",
+					// "traefik.http.routers.gitea.middlewares=authelia@file",
 				]
 			}
 		}

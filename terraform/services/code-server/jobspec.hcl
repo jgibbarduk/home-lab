@@ -18,18 +18,20 @@ job "code-server" {
 
 			env {
 				PORT = "${NOMAD_PORT_codeserver}"
-				DEFAULT_WORKSPACE = "/config/workspace"
+				// DEFAULT_WORKSPACE = "/config/workspace"
+				PROXY_DOMAIN = "dev.dingous.net"
 				PUID = 1000
       			PGID = 1000
 				TZ = "Europe/London"
 			}
 
 			config {
-				image = "linuxserver/code-server:latest"
+				image = "lscr.io/linuxserver/code-server:latest"
 				ports = ["codeserver"]
 
 				volumes = [
-					"/mnt/Development:/config"
+					"/mnt/shared-nfs/code-server/config:/config",
+					"/mnt/shared-nfs/code-server/data:/data"
 				]
 			}
 

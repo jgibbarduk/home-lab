@@ -1,9 +1,9 @@
 ---
 
-- name: Install a docker pre-reqs
+- name: Install docker pre-reqs
   apt:
     pkg:
-    - ca-certificates 
+    - ca-certificates
     - curl
     - gnupg
     - lsb-release
@@ -34,7 +34,7 @@
   shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/{{ ansible_distribution | lower }} $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
   when: sources_file.stat.exists == False
 
-- name: Install a docker-ce
+- name: Install docker-ce
   apt:
     update_cache: yes
     pkg:
@@ -54,13 +54,7 @@
   notify: Restart Docker
 
 - name: Install Docker-compose
-  shell: sudo curl -L "https://github.com/docker/compose/releases/download/1.29.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-  when: not is_pi 
-  tags: docker_compose
-
-- name: Install Docker-compose
-  shell: sudo curl -L "https://github.com/docker/compose-cli/releases/download/v2.0.0-beta.3/docker-compose-linux-armv7" -o /usr/local/bin/docker-compose
-  when: is_pi 
+  shell: sudo curl -L "https://github.com/docker/compose/releases/download/v{{ docker_compose_version }}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
   tags: docker_compose
 
 - name: Changing perm of /usr/local/bin/docker-compose

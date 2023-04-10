@@ -4,13 +4,13 @@
   set_fact:
     is_server: True
 
-- name: Generate nomad.hcl config file 
+- name: Generate nomad.hcl config file
   template:
     src: nomad.hcl.j2
     dest: /tmp/nomad-{{ item }}.hcl
   with_items: "{{ groups['server'] }}"
 
-- name: Create master server with nomad "{{version}}"
+- name: Create master server with nomad {{version}}
   command:
   args:
     argv:

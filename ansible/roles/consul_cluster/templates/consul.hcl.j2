@@ -4,8 +4,8 @@ encrypt    = "{{ consul_encryption_key }}"
 ui         = true
 
 {% if is_server is defined and is_server %}
-  server           = true
-  bootstrap_expect = 1
+server           = true
+bootstrap_expect = {{ groups['server'] | length }}
 {% endif %}
 
 bind_addr   = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}"
@@ -19,5 +19,9 @@ addresses {
 }
 
 {% if is_server is not defined or (is_server is defined and not is_server) %}
-retry_join = ["{{ hostvars[groups.server.0].ansible_facts.tailscale0.ipv4.address }}"]
+ retry_join = [
+  {% for server in groups['server'] %}
+  "{{ hostvars[server].ansible_facts.tailscale0.ipv4.address }}",
+  {% endfor %}
+]
 {% endif %}

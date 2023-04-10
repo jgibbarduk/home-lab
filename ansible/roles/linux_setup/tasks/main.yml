@@ -4,11 +4,8 @@
   tags:
     - always
 
-- name: set is_pi flag setup
-  set_fact:
-    is_pi: "{{ ansible_architecture.startswith('arm') }}"
-  tags:
-    - always
+# - name: Debug Ansible Facts
+#   debug: var=ansible_facts
 
 - import_tasks: apt.yml
   tags:
@@ -69,3 +66,11 @@
 - import_tasks: cockpit.yml
   tags:
     - cockpit
+
+# - import_tasks: bind9.yml
+#   tags:
+#     - bind9
+
+- import_tasks: apparmor.yml
+  tags:
+    - apparmor

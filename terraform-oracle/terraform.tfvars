@@ -1,0 +1,6 @@
+fingerprint      = "ae:f5:ec:8c:68:78:11:6f:3f:74:66:ca:51:9d:2d:1f"
+private_key_path = "./terraform@jgibbard.uk_2023-04-09T17_13_55.793Z.pem"
+user_ocid        = "ocid1.user.oc1..aaaaaaaaai2ctrlmevud7ban5ulyfu3i7ijt4gcg5sy6bnkx46crmbabnyba"
+tenancy_ocid     = "ocid1.tenancy.oc1..aaaaaaaaudtuurgcrptjmiy7uurcyqglhbu5ibrz2mo5ziks3mq2kceft6xq"
+compartment_ocid = "ocid1.tenancy.oc1..aaaaaaaaudtuurgcrptjmiy7uurcyqglhbu5ibrz2mo5ziks3mq2kceft6xq"
+region           = "uk-london-1"

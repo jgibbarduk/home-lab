@@ -24,6 +24,7 @@
         - wget
         - net-tools
         - nfs-common
+        - locales
 
 - name: install unattended-upgrades
   apt:

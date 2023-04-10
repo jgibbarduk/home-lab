@@ -1,0 +1,31 @@
+---
+
+- name: Stop Apparmor (if running)
+  become: yes
+  shell: systemctl stop apparmor
+  ignore_errors: true
+  no_log: true
+
+- name: Disable Apparmor (if running)
+  become: yes
+  shell: systemctl disable apparmor
+  ignore_errors: true
+  no_log: true
+
+- name: Remove "apparmor" package
+  become: yes
+  ansible.builtin.apt:
+    name: apparmor
+    state: absent
+    purge: true
+  notify: reboot
+
+- name: Remove useless packages from the cache
+  become: yes
+  ansible.builtin.apt:
+    autoclean: yes
+
+- name: Remove dependencies that are no longer required
+  become: yes
+  ansible.builtin.apt:
+    autoremove: yes

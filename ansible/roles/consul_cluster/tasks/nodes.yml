@@ -4,13 +4,13 @@
   set_fact:
     is_server: False
 
-- name: Generate consul.hcl config file 
+- name: Generate consul.hcl config file
   template:
     src: consul.hcl.j2
     dest: /tmp/consul-{{ item }}.hcl
   with_items: "{{ groups['client'] }}"
 
-- name: Create client and join {{groups.server.0}} with consul {{version}}
+- name: Create client and join with consul {{version}}
   command:
   args:
     argv:

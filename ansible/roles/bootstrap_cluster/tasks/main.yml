@@ -1,0 +1,17 @@
+---
+
+- name: Delete Consul data directory
+  ansible.builtin.file:
+    state: absent
+    path: /opt/consul
+
+
+# - name: Delete Nomad data directory
+#   ansible.builtin.file:
+#     state: absent
+#     path: /opt/nomad
+
+# - name: Delete Vault data directory
+#   ansible.builtin.file:
+#     state: absent
+#     path: /opt/vault

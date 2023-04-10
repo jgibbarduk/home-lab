@@ -1,5 +1,13 @@
 ---
 
+- name: Configuring Hostname
+  become: True
+  shell: "hostname {{ inventory_hostname }}"
+
+- name: Configuring Hostname (again)
+  become: True
+  shell: "hostnamectl set-hostname {{ inventory_hostname }}"
+
 - name: Configuring /etc/hostname
   become: True
   template:

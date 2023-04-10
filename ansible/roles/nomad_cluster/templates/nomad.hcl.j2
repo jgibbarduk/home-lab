@@ -2,24 +2,42 @@ data_dir  = "/opt/nomad"
 
 bind_addr = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}"
 
-datacenter = "dc1"
+datacenter = "{{ hostvars[item].datacenter }}"
 
 {% if is_server is defined and is_server %}
 server {
-  enabled          = true
-  bootstrap_expect = 1
-  encrypt          = "{{ nomad_encryption_key }}"
+  enabled           = true
+  bootstrap_expect  = {{ groups['server'] | length }}
+  encrypt           = "{{ nomad_encryption_key }}"
+
+  server_join {
+    retry_join = [
+      {% for server in groups['server'] %}
+        "{{ hostvars[server].ansible_facts.tailscale0.ipv4.address }}",
+      {% endfor %}
+    ]
+  }
 }
 {% endif %}
 
 client {
   enabled = true
+
+  {% if hostvars[item].cpu_total_compute is defined %}
+  cpu_total_compute = {{ hostvars[item].cpu_total_compute }}
+  {% endif %}
+
   host_network "tailscale" {
     cidr           = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}/32"
     reserved_ports = "22"
   }
+
   server_join {
-    retry_join = ["{{ hostvars[groups.server.0].ansible_facts.tailscale0.ipv4.address }}"]
+    retry_join = [
+      {% for server in groups['server'] %}
+        "{{ hostvars[server].ansible_facts.tailscale0.ipv4.address }}",
+      {% endfor %}
+    ]
   }
 }
 

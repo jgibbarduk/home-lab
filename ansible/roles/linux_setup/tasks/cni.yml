@@ -12,7 +12,7 @@
   when: cni_plugins.stat.exists == False
 
 - name: Download CNI plugins
-  shell: curl -L -o cni-plugins.tgz "https://github.com/containernetworking/plugins/releases/download/v1.0.0/cni-plugins-linux-$( [ $(uname -m) = aarch64 ] && echo arm64 || echo amd64)"-v1.0.0.tgz
+  shell: curl -L -o cni-plugins.tgz "https://github.com/containernetworking/plugins/releases/download/v{{ cni_plugins_version }}/cni-plugins-linux-$( [ $(uname -m) = aarch64 ] && echo arm64 || echo amd64)"-v{{ cni_plugins_version }}.tgz
   args:
     chdir: /tmp
   when: cni_plugins.stat.exists == False

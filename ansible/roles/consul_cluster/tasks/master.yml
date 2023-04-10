@@ -4,7 +4,7 @@
   set_fact:
     is_server: True
 
-- name: Generate consul.hcl config file 
+- name: Generate consul.hcl config file
   template:
     src: consul.hcl.j2
     dest: /tmp/consul-{{ item }}.hcl

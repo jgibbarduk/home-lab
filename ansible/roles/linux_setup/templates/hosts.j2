@@ -6,14 +6,10 @@ ff02::2         ip6-allrouters
 {% for server in groups['server'] %}
 {% if inventory_hostname == server %}
 127.0.0.1       {{server}}
-{% else %}
-{{ hostvars[server].ansible_facts.tailscale0.ipv4.address}}       {{server}}
 {% endif %}
 {% endfor %}
 {% for client in groups['client'] %}
 {% if inventory_hostname == client %}
 127.0.0.1       {{client}}
-{% else %}
-{{ hostvars[client].ansible_facts.tailscale0.ipv4.address }}       {{client}}
 {% endif %}
 {% endfor %}

@@ -3,6 +3,15 @@
 - hosts: server:client
   become: yes
   roles:
+    - bootstrap_cluster
+  vars_files:
+    - vault.yml
+  tags:
+    - clear
+
+- hosts: server:client
+  become: yes
+  roles:
     - linux_setup
   vars_files:
     - vault.yml
@@ -13,7 +22,7 @@
   roles:
     - role: oh_my_zsh_setup
       users:
-        - username: james
+        - username: "{{ ansible_user }}"
         - username: root
   vars_files:
     - vault.yml

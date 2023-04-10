@@ -4,7 +4,7 @@
   set_fact:
     is_server: False
 
-- name: Generate nomad.hcl config file 
+- name: Generate nomad.hcl config file
   template:
     src: nomad.hcl.j2
     dest: /tmp/nomad-{{ item }}.hcl

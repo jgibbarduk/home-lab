@@ -18,7 +18,8 @@
 - name: Install cockpit
   become: yes
   apt:
-      name: "{{ ansible_distribution_release }}-backports"
-      name: "cockpit"
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - cockpit
 
- 

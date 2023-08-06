@@ -1,7 +1,18 @@
+data "http" "public_ip" {
+  url = "https://ipinfo.io/json"
+  request_headers = {
+    Accept = "application/json"
+  }
+}
+
+locals {
+  ipinfo_json = jsondecode(data.http.public_ip.response_body)
+}
+
 module "private-vcn" {
   region            = var.region
   compartment_ocid  = var.compartment_ocid
-  my_public_ip_cidr = "31.124.209.154/32"
+  my_public_ip_cidr = "${local.ipinfo_json.ip}/32"
   environment       = var.environment
   source            = "./modules/private-vcn"
 }

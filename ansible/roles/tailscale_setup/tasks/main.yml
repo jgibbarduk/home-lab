@@ -5,6 +5,14 @@
     update_cache: yes
     upgrade: "yes"
 
+- name: Install dependencies
+  become: yes
+  apt:
+      name: "{{ packages }}"
+  vars:
+      packages:
+        - gnupg
+
 - name: Tailscale Signing Key
   apt_key:
     url: https://pkgs.tailscale.com/stable/{{ ansible_distribution | lower }}/{{ ansible_distribution_release | lower }}.gpg

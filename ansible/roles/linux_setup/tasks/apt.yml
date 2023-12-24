@@ -25,6 +25,7 @@
         - net-tools
         - nfs-common
         - locales
+        - rsync
 
 - name: install unattended-upgrades
   apt:

@@ -1,0 +1,49 @@
+---
+
+- name: Stop Nomad (if running)
+  become: yes
+  shell: systemctl stop nomad
+  ignore_errors: true
+  no_log: true
+
+- name: Disable Nomad (if running)
+  become: yes
+  shell: systemctl disable nomad
+  ignore_errors: true
+  no_log: true
+
+- name: Delete Nomad data directory
+  ignore_errors: True
+  ansible.builtin.file:
+    state: absent
+    path: /opt/nomad
+
+- name: Delete Nomad etc directory
+  ignore_errors: True
+  ansible.builtin.file:
+    state: absent
+    path: /etc/nomad.d
+
+- name: Stop All Docker Containers
+  become: yes
+  shell: docker kill $(docker ps -q)
+  ignore_errors: true
+
+- name: Prune Docker
+  become: yes
+  shell: docker system prune -a --volumes -f
+  ignore_errors: true
+
+- name: Stop Docker
+  systemd:
+    name: docker
+    state: stopped
+
+# - name: Enable Nomad (if running)
+#   become: yes
+#   shell: systemctl enable nomad
+
+# - name: Start Nomad (if running)
+#   become: yes
+#   shell: systemctl start nomad
+

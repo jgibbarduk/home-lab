@@ -2,26 +2,30 @@ datacenter = "dc1"
 data_dir   = "/opt/consul"
 encrypt    = "{{ consul_encryption_key }}"
 ui         = true
+node_name  = "{{ item }}"
 
 {% if is_server is defined and is_server %}
 server           = true
 bootstrap_expect = {{ groups['server'] | length }}
 {% endif %}
 
-bind_addr   = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}"
-client_addr = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}"
+advertise_addr   = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}"
+bind_addr        = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}"
+client_addr      = "0.0.0.0"
 
 ports {
   grpc = 8502
 }
 
-addresses {
-}
-
-{% if is_server is not defined or (is_server is defined and not is_server) %}
- retry_join = [
-  {% for server in groups['server'] %}
-  "{{ hostvars[server].ansible_facts.tailscale0.ipv4.address }}",
+start_join =  [
+  {% for item in groups['server'] %}
+  "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}",
   {% endfor %}
 ]
-{% endif %}
+
+retry_join = [
+  {% for item in groups['server'] %}
+  "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8301",
+  {% endfor %}
+]
+rejoin_after_leave = true

@@ -19,9 +19,9 @@
   tags:
     - locale
 
-- import_tasks: resolv.yml
-  tags:
-    - resolv
+# - import_tasks: resolv.yml
+#   tags:
+#     - resolv
 
 - import_tasks: hosts.yml
   tags:

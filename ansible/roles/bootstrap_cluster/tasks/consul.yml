@@ -1,0 +1,23 @@
+---
+
+- name: Stop Consul (if running)
+  become: yes
+  shell: systemctl stop consul
+  ignore_errors: true
+  no_log: true
+
+- name: Disable Consul (if running)
+  become: yes
+  shell: systemctl disable consul
+  ignore_errors: true
+  no_log: true
+
+- name: Delete Consul data directory
+  ansible.builtin.file:
+    state: absent
+    path: /opt/consul
+
+- name: Restore Consul data directory
+  ansible.builtin.file:
+    state: absent
+    path: /opt/consul

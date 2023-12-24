@@ -52,13 +52,35 @@
   debug: var=http_api_result
   when: http_api_result is failed or debug_master
 
-- name: Unseal Vault server via API
+- name: Unseal Vault client via API (key 1)
   uri:
     url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200/v1/sys/unseal"
     method: POST
     validate_certs: False
     status_code: 200
     body_format: json
-    body: "{ \"key\": \"{{ vault_master_key }}\" }"
+    body: "{ \"key\": \"{{ vault_master_key_1 }}\" }"
+  with_items: "{{ groups['client'] }}"
+  when: http_api_result is succeeded
+
+- name: Unseal Vault client via API (key 2)
+  uri:
+    url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200/v1/sys/unseal"
+    method: POST
+    validate_certs: False
+    status_code: 200
+    body_format: json
+    body: "{ \"key\": \"{{ vault_master_key_2 }}\" }"
+  with_items: "{{ groups['client'] }}"
+  when: http_api_result is succeeded
+
+- name: Unseal Vault client via API (key 3)
+  uri:
+    url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200/v1/sys/unseal"
+    method: POST
+    validate_certs: False
+    status_code: 200
+    body_format: json
+    body: "{ \"key\": \"{{ vault_master_key_3 }}\" }"
   with_items: "{{ groups['client'] }}"
   when: http_api_result is succeeded

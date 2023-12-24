@@ -13,18 +13,12 @@
 - name: reload systemctl
   command: systemctl daemon-reload
 
-- name: mount all
-  command: "{{ item }}"
-  with_items: 
-    - "umount -a"
-    - "mount -a"
-
 - name: reboot
   reboot:
 
 - name: timesyncd
   command: "{{ item }}"
-  with_items: 
+  with_items:
     - "timedatectl show-timesync --all"
     - "timedatectl status"
     - "systemctl restart systemd-timesyncd"

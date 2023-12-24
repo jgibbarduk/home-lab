@@ -32,6 +32,11 @@ client {
     reserved_ports = "22"
   }
 
+  host_volume "docker-sock-ro" {
+    path = "/var/run/docker.sock"
+    read_only = true
+  }
+
   server_join {
     retry_join = [
       {% for server in groups['server'] %}
@@ -43,6 +48,8 @@ client {
 
 plugin "docker" {
   config {
+    # extra Docker labels to be set by Nomad on each Docker container with the appropriate value
+    extra_labels = ["job_name", "task_group_name", "task_name", "namespace", "node_name"]
     allow_privileged = true
     volumes {
       enabled = true

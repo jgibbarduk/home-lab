@@ -3,11 +3,12 @@
 - hosts: server:client
   become: yes
   roles:
-    - bootstrap_cluster
+    - tailscale_setup
   vars_files:
     - vault.yml
   tags:
-    - clear
+    - setup
+    - tailscale
 
 - hosts: server:client
   become: yes
@@ -29,16 +30,6 @@
   tags:
     - setup
 
-- hosts: server:client
-  become: yes
-  roles:
-    - tailscale_setup
-  vars_files:
-    - vault.yml
-  tags:
-    - setup
-    - tailscale
-
 - hosts: localhost
   roles:
     - bootstrap_hashiup
@@ -46,14 +37,6 @@
     - vault.yml
   tags:
     - hashiup
-
-- hosts: localhost
-  roles:
-    - nomad_cluster
-  vars_files:
-    - vault.yml
-  tags:
-    - nomad
 
 - hosts: localhost
   roles:
@@ -70,6 +53,14 @@
     - vault.yml
   tags:
     - vault
+
+- hosts: localhost
+  roles:
+    - nomad_cluster
+  vars_files:
+    - vault.yml
+  tags:
+    - nomad
 
 - hosts: server:client
   roles:

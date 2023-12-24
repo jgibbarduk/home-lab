@@ -1,12 +1,13 @@
-ui = true
+ui            = true
+cluster_addr  = "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8201"
+api_addr      = "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200"
+disable_mlock = true
 
 storage "consul" {
   address = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8500"
   path    = "vault/"
   service_tags = "traefik.enable=true,traefik.http.routers.vault.entrypoints=https,traefik.http.routers.vault.rule=Host(`vault.dingous.net`),traefik.http.routers.vault.tls.certResolver=awsresolver,traefik.http.routers.vault.middlewares=authelia@file"
 }
-
-api_addr = "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200"
 
 listener "tcp" {
   address     = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200"

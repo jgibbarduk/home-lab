@@ -1,0 +1,9 @@
+---
+
+- hosts: server:client
+  become: yes
+  roles:
+    - bootstrap_cluster
+  vars_files:
+    - vault.yml
+

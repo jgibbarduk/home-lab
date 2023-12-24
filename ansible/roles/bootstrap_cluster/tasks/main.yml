@@ -1,17 +1,13 @@
 ---
 
-- name: Delete Consul data directory
-  ansible.builtin.file:
-    state: absent
-    path: /opt/consul
+- import_tasks: vault.yml
+  tags:
+    - clear-vault
 
+- import_tasks: consul.yml
+  tags:
+    - clear-consul
 
-# - name: Delete Nomad data directory
-#   ansible.builtin.file:
-#     state: absent
-#     path: /opt/nomad
-
-# - name: Delete Vault data directory
-#   ansible.builtin.file:
-#     state: absent
-#     path: /opt/vault
+- import_tasks: nomad.yml
+  tags:
+    - clear-nomad

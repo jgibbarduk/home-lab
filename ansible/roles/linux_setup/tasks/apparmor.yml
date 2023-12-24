@@ -18,7 +18,11 @@
     name: apparmor
     state: absent
     purge: true
-  notify: reboot
+
+- name: Restart Docker
+  systemd:
+    name: docker
+    state: restarted
 
 - name: Remove useless packages from the cache
   become: yes
@@ -29,3 +33,4 @@
   become: yes
   ansible.builtin.apt:
     autoremove: yes
+

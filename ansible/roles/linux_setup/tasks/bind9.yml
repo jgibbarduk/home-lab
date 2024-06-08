@@ -5,7 +5,6 @@
   apt:
       name: "{{ packages }}"
       update_cache: yes
-      upgrade: "yes"
   vars:
       packages:
         - bind9
@@ -20,7 +19,7 @@
       zone "consul" IN {
         type forward;
         forward only;
-        forwarders { 100.91.118.62 port 8600; };
+        forwarders { 127.0.0.1 port 8600; };
       };
     state: present
   notify:

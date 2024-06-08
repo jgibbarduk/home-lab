@@ -35,3 +35,21 @@
 - name: Debug report of client joined
   debug: var=client_joined
   when: client_joined is failed or debug_nodes
+
+- name: Check API availability of client nodes
+  uri:
+    url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:4646/v1/agent/self"
+    method: GET
+    validate_certs: False
+    status_code: 200
+    body_format: json
+  with_items: "{{ groups['client'] }}"
+  register: http_api_result
+  retries: 6
+  delay: 15
+  until: http_api_result is not failed
+  when: client_joined is succeeded
+
+- name: Debug report of API availability
+  debug: var=http_api_result
+  when: http_api_result is failed or debug_master

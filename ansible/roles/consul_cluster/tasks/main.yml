@@ -1,3 +1,9 @@
 ---
 - import_tasks: master.yml
+  tags:
+    - consul-server
+
 - import_tasks: nodes.yml
+  tags:
+    - consul-client
+

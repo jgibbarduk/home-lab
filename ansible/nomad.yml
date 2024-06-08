@@ -30,6 +30,17 @@
   tags:
     - setup
 
+- hosts: etcd
+  vars:
+    etcd_secure: false
+    etcd_iface_public: tailscale
+  vars_files:
+    - vault.yml
+  roles:
+    - etcd_cluster
+  tags:
+    - etcd
+
 - hosts: localhost
   roles:
     - bootstrap_hashiup

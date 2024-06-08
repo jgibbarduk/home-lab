@@ -23,9 +23,18 @@ server {
 client {
   enabled = true
 
+  {% if hostvars[item].node_pool is defined %}
+  node_pool = "{{ hostvars[item].node_pool }}"
+  {% endif %}
+
   {% if hostvars[item].cpu_total_compute is defined %}
   cpu_total_compute = {{ hostvars[item].cpu_total_compute }}
   {% endif %}
+
+  host_network "local" {
+      cidr = "{{ hostvars[item].ansible_host }}/32"
+      reserved_ports = "22"
+  }
 
   host_network "tailscale" {
     cidr           = "{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}/32"

@@ -31,6 +31,20 @@
   when: master_created is succeeded and http_api_result is succeeded
   register: client_joined
 
+- name: Check API availability of client
+  uri:
+    url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8500/v1/catalog/datacenters"
+    method: GET
+    validate_certs: False
+    status_code: 200
+    body_format: json
+  with_items: "{{ groups['client'] }}"
+  register: http_api_result
+  retries: 6
+  delay: 15
+  until: http_api_result is not failed
+  when: client_joined is succeeded
+
 - name: Debug report of client joined
   debug: var=client_joined
   when: client_joined is failed or debug_nodes

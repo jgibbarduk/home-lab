@@ -9,7 +9,7 @@
   become: True
   ansible.builtin.lineinfile:
     path: /etc/fstab
-    line: 100.91.185.3:/volume1/NetBackup /mnt/backup nfs noauto,x-systemd.automount,x-systemd.mount-timeout=30,_netdev,rw,async,hard,intr,noexec
+    line: "{{ lister_ip }}:/volume1/NetBackup /mnt/backup nfs noauto,x-systemd.automount,x-systemd.mount-timeout=30,_netdev,rw,async,hard,intr,noexec"
     create: yes
 
 - name: Make sure "/mnt/shared-nfs/" exists
@@ -22,10 +22,11 @@
   ignore_errors: True
   ansible.builtin.lineinfile:
     path: /etc/fstab
-    line: 100.91.185.3:/volume1/shared-nfs /mnt/shared-nfs nfs noauto,x-systemd.automount,x-systemd.mount-timeout=30,_netdev,rw,async,hard,intr
+    line: "{{ lister_ip }}:/volume1/shared-nfs /mnt/shared-nfs nfs noauto,x-systemd.automount,x-systemd.mount-timeout=30,_netdev,rw,async,hard,intr"
     create: yes
 
 - name: mount all
   command: "{{ item }}"
   with_items:
-    - "mount -a"
+    - "mount /mnt/backup"
+    - "mount /mnt/shared-nfs"

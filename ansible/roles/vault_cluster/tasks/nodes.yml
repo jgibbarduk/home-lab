@@ -34,14 +34,14 @@
   debug: var=master_created
   when: debug_master or master_created is failed
 
-- name: Check API availability of master servers
+- name: Check API availability of client nodes
   uri:
     url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200/v1/sys/health"
     method: GET
     validate_certs: False
     status_code: 200, 201, 503, 429
     body_format: json
-  with_items: "{{ groups['server'] }}"
+  with_items: "{{ groups['client'] }}"
   register: http_api_result
   retries: 6
   delay: 15

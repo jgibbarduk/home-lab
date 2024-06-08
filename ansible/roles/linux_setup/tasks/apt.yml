@@ -26,6 +26,7 @@
         - nfs-common
         - locales
         - rsync
+        - htop
 
 - name: install unattended-upgrades
   apt:

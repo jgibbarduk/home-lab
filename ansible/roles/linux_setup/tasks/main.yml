@@ -55,21 +55,21 @@
   tags:
     - fstab
 
-- import_tasks: monitoring.yml
-  tags:
-    - monitoring
+#- import_tasks: monitoring.yml
+#  tags:
+#    - monitoring
 
 - import_tasks: cni.yml
   tags:
     - cni
 
-- import_tasks: cockpit.yml
-  tags:
-    - cockpit
+#- import_tasks: cockpit.yml
+#  tags:
+#    - cockpit
 
-# - import_tasks: bind9.yml
-#   tags:
-#     - bind9
+#- import_tasks: bind9.yml
+#  tags:
+#   - bind9
 
 - import_tasks: apparmor.yml
   tags:

@@ -1,3 +1,7 @@
 ---
 - import_tasks: master.yml
+  tags:
+    - vault-server
 - import_tasks: nodes.yml
+  tags:
+    - vault-client

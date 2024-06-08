@@ -1,0 +1,11 @@
+---
+
+- hosts: server
+  become: yes
+  roles:
+    - robertdebock.java
+    - robertdebock.rundeck
+  vars_files:
+    - vault.yml
+  tags:
+    - setup

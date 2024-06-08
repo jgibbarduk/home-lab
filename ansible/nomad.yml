@@ -41,7 +41,7 @@
   tags:
     - etcd
 
-- hosts: localhost
+- hosts: rundeck
   roles:
     - bootstrap_hashiup
   vars_files:

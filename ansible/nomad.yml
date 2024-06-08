@@ -57,7 +57,7 @@
   tags:
     - consul
 
-- hosts: localhost
+- hosts: server:client
   roles:
     - vault_cluster
   vars_files:

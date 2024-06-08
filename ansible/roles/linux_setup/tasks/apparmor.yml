@@ -20,6 +20,7 @@
     purge: true
 
 - name: Restart Docker
+  ignore_errors: True
   systemd:
     name: docker
     state: restarted

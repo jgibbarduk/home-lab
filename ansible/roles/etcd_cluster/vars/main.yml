@@ -1,0 +1,41 @@
+---
+
+etcd_scheme: "{% if etcd_secure %}https{% else %}http{% endif %}://"
+etcd_cluster: "{% for host in groups[etcd_master_group_name] %}{{ hostvars[host]['ansible_fqdn' if not etcd_use_ips | bool else 'inventory_hostname'] }}={{ etcd_scheme }}{{ hostvars[host]['etcd_address_cluster'] }}:{{ etcd_port_peer }}{% if not loop.last %},{% endif %}{% endfor %}"
+
+etcd_cluster_data_dir: '{{ etcd_data_dir }}/{{ etcd_cluster_name }}.etcd'
+etcd_cluster_pki_dir: '{{ etcd_data_dir }}/{{ etcd_cluster_name }}.pki'
+
+etcd_pki_key_file: '{{ inventory_hostname }}{{ etcd_pki_key_suffix }}'
+etcd_pki_key_src: '{{ etcd_pki_dir }}/{{ etcd_pki_key_file }}'
+etcd_pki_key_dest: '{{ etcd_cluster_pki_dir }}/{{ etcd_pki_key_file }}'
+
+etcd_pki_cert_file: '{{ inventory_hostname }}{{ etcd_pki_cert_suffix }}'
+etcd_pki_cert_src: '{{ etcd_pki_dir }}/{{ etcd_pki_cert_file }}'
+etcd_pki_cert_dest: '{{ etcd_cluster_pki_dir }}/{{ etcd_pki_cert_file }}'
+
+etcd_pki_ca_file: 'ca{{ etcd_pki_cert_suffix }}'
+etcd_pki_ca_cert_src: '{{ etcd_pki_dir }}/{{ etcd_pki_ca_file }}'
+etcd_pki_ca_cert_dest: '{{ etcd_cluster_pki_dir }}/{{ etcd_pki_ca_file }}'
+
+etcd_listen: |-
+  {%- if etcd_iface_public == "all" -%}
+  0.0.0.0
+  {%- elif etcd_iface_public == "default" -%}
+  {{- ansible_default_ipv4.address | default("127.0.0.1") -}}
+  {%- elif etcd_iface_public == "tailscale" -%}
+  {{- hostvars[inventory_hostname]["ansible_facts"]["tailscale0"]["ipv4"]["address"] -}}
+  {%- else -%}
+  {{- hostvars[inventory_hostname]["ansible_" ~ etcd_iface_public]["ipv4"]["address"] -}}
+  {%- endif -%}
+
+etcd_address: |-
+  {%- if not (etcd_use_ips | bool) -%}
+  {{- ansible_fqdn -}}
+  {%- elif etcd_iface_public in [ "all", "default" ] -%}
+  {{- ansible_default_ipv4.address | default("127.0.0.1") -}}
+  {%- elif etcd_iface_public == "tailscale" -%}
+  {{- hostvars[inventory_hostname]["ansible_facts"]["tailscale0"]["ipv4"]["address"] -}}
+  {%- else -%}
+  {{- hostvars[inventory_hostname]["ansible_" ~ etcd_iface_public]["ipv4"]["address"] -}}
+  {%- endif -%}

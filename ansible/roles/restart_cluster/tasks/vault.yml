@@ -1,0 +1,13 @@
+---
+
+- name: Stop Vault (if running)
+  become: yes
+  shell: systemctl stop vault
+
+- name: Enable Vault (if running)
+  become: yes
+  shell: systemctl enable vault
+
+- name: Start Vault (if running)
+  become: yes
+  shell: systemctl start vault

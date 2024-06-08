@@ -1,0 +1,21 @@
+---
+- name: Install etcd.service systemd unit
+  become: true
+  become_user: root
+  with_items:
+    - f: etcd.service
+      d: /etc/systemd/system
+  ansible.builtin.template:
+    src: '{{ item.f }}.j2'
+    dest: '{{ item.d }}/{{ item.f }}'
+    mode: '{{ item.m | default("0644") }}'
+  notify: Systemctl daemon-reload
+
+- name: Launching etcd...
+  when: etcd_launch | bool
+  become: true
+  become_user: root
+  ansible.builtin.service:
+    name: etcd
+    enabled: true
+    state: started

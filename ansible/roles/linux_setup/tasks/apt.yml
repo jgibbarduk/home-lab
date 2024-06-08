@@ -22,6 +22,7 @@
         - zip
         - zsh
         - wget
+        - git
         - net-tools
         - nfs-common
         - locales

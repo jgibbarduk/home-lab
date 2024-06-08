@@ -10,14 +10,17 @@
 - import_tasks: apt.yml
   tags:
     - apt
+    - base
 
 - import_tasks: hostname.yml
   tags:
     - hostname
+    - base
 
 - import_tasks: locale.yml
   tags:
     - locale
+    - base
 
 # - import_tasks: resolv.yml
 #   tags:
@@ -34,14 +37,17 @@
 - import_tasks: timezone.yml
   tags:
     - timezone
+    - base
 
 - import_tasks: timesync.yml
   tags:
     - timesync
+    - base
 
 - import_tasks: banner.yml
   tags:
     - banner
+    - base
 
 - import_tasks: users.yml
   tags:
@@ -54,6 +60,7 @@
 - import_tasks: fstab.yml
   tags:
     - fstab
+    - base
 
 #- import_tasks: monitoring.yml
 #  tags:
@@ -74,3 +81,4 @@
 - import_tasks: apparmor.yml
   tags:
     - apparmor
+    - base

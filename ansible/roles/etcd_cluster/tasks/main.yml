@@ -1,0 +1,64 @@
+---
+- name: Installing etcd...
+  ansible.builtin.include_role:
+    name: etcd
+
+- name: Collect facts
+  ansible.builtin.set_fact:
+    cacheable: true
+    etcd_listen_public: '{{ etcd_listen }}'
+    etcd_listen_cluster: '{{ etcd_listen }}'
+    etcd_address_public: '{{ etcd_address }}'
+    etcd_address_cluster: '{{ etcd_address }}'
+
+- name: Create etcd group
+  become: true
+  become_user: root
+  ansible.builtin.group:
+    name: '{{ etcd_group }}'
+    state: present
+
+- name: Create etcd user
+  become: true
+  become_user: root
+  ansible.builtin.user:
+    name: '{{ etcd_user }}'
+    group: '{{ etcd_group }}'
+    home: '{{ etcd_data_dir }}'
+    state: present
+
+- name: Create dirs...
+  become: true
+  become_user: root
+  ansible.builtin.file:
+    state: directory
+    path: '{{ item }}'
+    owner: '{{ etcd_user }}'
+    group: '{{ etcd_group }}'
+    mode: '755'
+  with_items:
+    - /etc/etcd
+    - '{{ etcd_cluster_pki_dir }}'
+
+- name: Install PKI...
+  ansible.builtin.include_tasks: pki.yml
+  when: etcd_secure | bool
+
+- name: Templating /etc/etcd/etcd.conf
+  become: true
+  become_user: root
+  with_items:
+    - f: etcd.conf
+      d: /etc/etcd
+  ansible.builtin.template:
+    src: '{{ item.f }}.j2'
+    dest: '{{ item.d }}/{{ item.f }}'
+    owner: '{{ etcd_user }}'
+    group: '{{ etcd_group }}'
+    mode: '644'
+  notify:
+    - Restart etcd masters
+    - Restart etcd members
+
+- name: Configure init system
+  ansible.builtin.include_tasks: '{{ etcd_init_system }}.yml'

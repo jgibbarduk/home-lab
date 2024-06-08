@@ -1,0 +1,13 @@
+---
+# handlers file for rundeck
+
+- name: Systemd daemon reload
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  notify:
+    - Restart rundeck
+
+- name: Restart rundeck
+  ansible.builtin.service:
+    name: rundeck
+    state: restarted

@@ -1,0 +1,48 @@
+---
+- name: Installing unarchivedeps
+  ansible.builtin.include_role:
+    name: unarchivedeps
+- name: Check for installation in {{ etcd_install_subdir }}
+  become: true
+  ansible.builtin.stat:
+    path: '{{ etcd_install_subdir }}'
+  changed_when: false
+  register: etcd_binary_dir
+
+- name: Downloading and installing etcd
+  when: not etcd_binary_dir.stat.exists
+  block:
+    - name: Downloading {{ etcd_archive_url }} to {{ etcd_tmp_archive }}
+      become: true
+      become_user: root
+      ansible.builtin.get_url:
+        url: '{{ etcd_archive_url }}'
+        dest: '{{ etcd_tmp_archive }}'
+        checksum: '{{ etcd_checksum }}'
+        timeout: '{{ etcd_download_timeout_seconds }}'
+        mode: '644'
+    - name: Unachive {{ etcd_tmp_archive }} to {{ etcd_install_dir }}
+      become: true
+      become_user: root
+      ansible.builtin.unarchive:
+        remote_src: true
+        src: '{{ etcd_tmp_archive }}'
+        dest: '{{ etcd_install_dir }}'
+        creates: '{{ etcd_install_subdir }}'
+        extra_opts: '{{ etcd_unarchive_extra_opts }}'
+  always:
+    - name: Rm {{ etcd_tmp_archive }}
+      become: true
+      become_user: root
+      ansible.builtin.file:
+        path: '{{ etcd_tmp_archive }}'
+        state: absent
+
+- name: Linking etcd binaries
+  loop:
+    - etcd
+    - etcdctl
+    - etcdutl
+  loop_control:
+    loop_var: etcd_stem
+  ansible.builtin.include_tasks: links.yml

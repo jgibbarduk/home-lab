@@ -1,0 +1,10 @@
+---
+
+- import_tasks: vault.yml
+  tags:
+    - restart-vault
+
+- import_tasks: consul.yml
+  tags:
+    - restart-consul
+

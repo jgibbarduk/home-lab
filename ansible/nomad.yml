@@ -41,7 +41,7 @@
   tags:
     - etcd
 
-- hosts: rundeck
+- hosts: server:client
   roles:
     - bootstrap_hashiup
   vars_files:

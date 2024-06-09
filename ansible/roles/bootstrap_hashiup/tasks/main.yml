@@ -1,6 +1,12 @@
 ---
 
+- name: Copy hashi-up script
+  ansible.builtin.copy:
+    src: "{{role_path}}/files/get_hashiup.sh"
+    dest: "/tmp/get_hashiup.sh"
+    mode: +x
+
 - name: Install hashi-up binary
-  command: "{{role_path}}/files/get_hashiup.sh"
-  # become: yes
+  command: "/tmp/get_hashiup.sh"
+  become: yes
   register: installhashiup

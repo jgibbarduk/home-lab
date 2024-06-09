@@ -15,10 +15,6 @@
     - locale
     - base
 
-# - import_tasks: resolv.yml
-#   tags:
-#     - resolv
-
 - import_tasks: hosts.yml
   tags:
     - hosts
@@ -55,21 +51,10 @@
     - fstab
     - base
 
-#- import_tasks: monitoring.yml
-#  tags:
-#    - monitoring
-
 - import_tasks: cni.yml
   tags:
     - cni
-
-#- import_tasks: cockpit.yml
-#  tags:
-#    - cockpit
-
-#- import_tasks: bind9.yml
-#  tags:
-#   - bind9
+  when: hostvars[inventory_hostname]['datacenter'] == 'dc1' | bool
 
 - import_tasks: apparmor.yml
   tags:

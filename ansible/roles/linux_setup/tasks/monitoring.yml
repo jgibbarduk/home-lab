@@ -1,4 +1,0 @@
----
-
-- name: Install bpytop
-  command: "pip3 install bpytop"

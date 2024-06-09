@@ -1,8 +1,0 @@
----
-
-- name: Configuring /etc/resolv.conf
-  become: True
-  template:
-    src: resolv.j2
-    dest: /etc/resolv.conf
-  # notify: restart networking

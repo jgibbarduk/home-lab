@@ -31,12 +31,12 @@
   register: master_created
 
 - name: Debug report of master creation
-#  delegate_to: localhost
+  delegate_to: localhost
   debug: var=master_created
   when: debug_master or master_created is failed
 
 - name: Check API availability of vault server
-#  delegate_to: localhost
+  delegate_to: localhost
   uri:
     url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200/v1/sys/health"
     method: GET
@@ -51,12 +51,12 @@
   when: master_created is succeeded
 
 - name: Debug report of API availability
-#  delegate_to: localhost
+  delegate_to: localhost
   debug: var=http_api_result
   when: http_api_result is failed or debug_master
 
 - name: Unseal Vault server via API (key 1)
-#  delegate_to: localhost
+  delegate_to: localhost
   uri:
     url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200/v1/sys/unseal"
     method: POST
@@ -68,7 +68,7 @@
   when: http_api_result is succeeded
 
 - name: Unseal Vault server via API (key 2)
-#  delegate_to: localhost
+  delegate_to: localhost
   uri:
     url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200/v1/sys/unseal"
     method: POST
@@ -80,7 +80,7 @@
   when: http_api_result is succeeded
 
 - name: Unseal Vault server via API (key 3)
-#  delegate_to: localhost
+  delegate_to: localhost
   uri:
     url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8200/v1/sys/unseal"
     method: POST

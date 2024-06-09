@@ -42,28 +42,29 @@
     - etcd
 
 - hosts: server:client
-  roles:
-    - bootstrap_hashiup
-  vars_files:
-    - vault.yml
-  tags:
-    - hashiup
-
-- hosts: localhost
-  roles:
-    - consul_cluster
-  vars_files:
-    - vault.yml
-  tags:
-    - consul
-
-- hosts: server:client
+  pre_tasks:
+    - name: Gather facts from ALL hosts (regardless of limit or tags)
+      setup:
+      delegate_to: "{{ item }}"
+      delegate_facts: True
+      when: hostvars[item]['ansible_default_ipv4'] is not defined
+      with_items: "{{ groups['all'] }}"
+      tags:
+        - always
   roles:
     - vault_cluster
   vars_files:
     - vault.yml
   tags:
     - vault
+
+- hosts: server:client
+  roles:
+    - consul_cluster
+  vars_files:
+    - vault.yml
+  tags:
+    - consul
 
 - hosts: localhost
   roles:

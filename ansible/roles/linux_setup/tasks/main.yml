@@ -1,12 +1,5 @@
 ---
 
-- gather_facts:
-  tags:
-    - always
-
-# - name: Debug Ansible Facts
-#   debug: var=ansible_facts
-
 - import_tasks: apt.yml
   tags:
     - apt

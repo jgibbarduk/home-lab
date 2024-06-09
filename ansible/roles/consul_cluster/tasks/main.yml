@@ -1,9 +1,51 @@
 ---
-- import_tasks: master.yml
-  tags:
-    - consul-server
 
-- import_tasks: nodes.yml
-  tags:
-    - consul-client
+- name: Install hashi-up
+  ansible.builtin.import_role:
+    name: bootstrap_hashiup
 
+- name: Generate consul.hcl config file
+  template:
+    src: consul.hcl.j2
+    dest: /tmp/consul-{{ item }}.hcl
+  with_items: "{{ inventory_hostname }}"
+
+- name: Create master server with consul "{{version}}"
+  command:
+  args:
+    argv:
+      - hashi-up
+      - consul
+      - install
+      - --server
+      - --local
+      - --version
+      - "{{ version }}"
+      - --config-file
+      - /tmp/consul-{{ inventory_hostname }}.hcl
+  register: master_created
+
+- name: Debug report of master creation
+  delegate_to: localhost
+  debug: var=master_created
+  when: debug_master or master_created is failed
+
+- name: Check API availability of master servers
+  delegate_to: localhost
+  uri:
+    url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:8500/v1/catalog/datacenters"
+    method: GET
+    validate_certs: False
+    status_code: 200
+    body_format: json
+  with_items: "{{ inventory_hostname }}"
+  register: http_api_result
+  retries: 6
+  delay: 15
+  until: http_api_result is not failed
+  when: master_created is succeeded
+
+- name: Debug report of API availability
+  delegate_to: localhost
+  debug: var=http_api_result
+  when: http_api_result is failed or debug_master

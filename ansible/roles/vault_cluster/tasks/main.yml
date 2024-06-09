@@ -1,22 +1,16 @@
 ---
 
-- name: "Set variables"
-  set_fact:
-    is_server: True
-
 - name: Install hashi-up
   ansible.builtin.import_role:
     name: bootstrap_hashiup
 
 - name: Generate vault.hcl config file
-#  delegate_to: localhost
   template:
     src: vault.hcl.j2
     dest: /tmp/vault-{{ item }}.hcl
   with_items: "{{ inventory_hostname }}"
 
 - name: Create master server with vault "{{version}}"
-#  delegate_to: localhost
   command:
   args:
     argv:

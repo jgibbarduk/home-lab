@@ -1,6 +1,6 @@
 ---
 
-- hosts: server:client
+- hosts: all
   become: yes
   roles:
     - tailscale_setup

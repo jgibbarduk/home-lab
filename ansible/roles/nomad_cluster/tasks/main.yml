@@ -1,4 +1,54 @@
 ---
 
-- import_tasks: master.yml
-- import_tasks: nodes.yml
+- name: Install hashi-up
+  ansible.builtin.import_role:
+    name: bootstrap_hashiup
+
+- name: "Set is_server"
+  set_fact:
+    is_server: "{{ is_server | default(false) }}"
+
+- name: Generate nomad.hcl config file
+  template:
+    src: nomad.hcl.j2
+    dest: /tmp/nomad-{{ item }}.hcl
+  with_items: "{{ inventory_hostname }}"
+
+- name: Create service with nomad {{version}}
+  command:
+  args:
+    argv:
+      - hashi-up
+      - nomad
+      - install
+      - --local
+      - --version
+      - "{{ version }}"
+      - --config-file
+      - /tmp/nomad-{{ inventory_hostname }}.hcl
+  register: master_created
+
+- name: Debug report of master creation
+  delegate_to: localhost
+  debug: var=master_created
+  when: debug_master or master_created is failed
+
+- name: Check API availability of nomad service
+  delegate_to: localhost
+  uri:
+    url: "http://{{ hostvars[item].ansible_facts.tailscale0.ipv4.address }}:4646/v1/agent/self"
+    method: GET
+    validate_certs: False
+    status_code: 200
+    body_format: json
+  with_items: "{{ inventory_hostname }}"
+  register: http_api_result
+  retries: 6
+  delay: 15
+  until: http_api_result is not failed
+  when: master_created is succeeded
+
+- name: Debug report of API availability
+  delegate_to: localhost
+  debug: var=http_api_result
+  when: http_api_result is failed or debug_master

@@ -4,8 +4,7 @@
   ansible.builtin.import_role:
     name: bootstrap_hashiup
 
-
-- name: "Set variables"
+- name: "Set is_server"
   set_fact:
     is_server: "{{ is_server | default(false) }}"
 
@@ -22,7 +21,6 @@
       - hashi-up
       - consul
       - install
-      - --server
       - --local
       - --version
       - "{{ version }}"

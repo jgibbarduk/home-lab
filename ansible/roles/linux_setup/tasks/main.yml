@@ -5,6 +5,10 @@
     - apt
     - base
 
+- import_tasks: apt-dist.yml
+  tags:
+    - proxmox
+
 - import_tasks: hostname.yml
   tags:
     - hostname
@@ -32,11 +36,13 @@
   tags:
     - timesync
     - base
+    - proxmox
 
 - import_tasks: banner.yml
   tags:
     - banner
     - base
+    - proxmox
 
 - import_tasks: users.yml
   tags:

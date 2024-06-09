@@ -1,0 +1,32 @@
+
+- name: Update apt cache and dist-upgrade
+  become: yes
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: Install dependencies
+  become: yes
+  apt:
+      name: "{{ packages }}"
+  vars:
+      packages:
+        - vim
+        - curl
+        - jq
+        - unzip
+        - zip
+        - htop
+        - net-tools
+        - wget
+        - systemd-timesyncd
+
+- name: Remove useless packages from the cache
+  become: yes
+  apt:
+    autoclean: yes
+
+- name: Remove dependencies that are no longer required
+  become: yes
+  apt:
+    autoremove: yes

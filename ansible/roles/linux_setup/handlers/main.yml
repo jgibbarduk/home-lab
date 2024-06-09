@@ -19,7 +19,6 @@
 - name: timesyncd
   command: "{{ item }}"
   with_items:
-    - "timedatectl show-timesync --all"
     - "timedatectl status"
     - "systemctl restart systemd-timesyncd"
     - "timedatectl set-ntp true"

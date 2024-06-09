@@ -31,7 +31,7 @@
   register: master_created
 
 - name: Debug report of master creation
-  delegate_to: localhost
+#  delegate_to: localhost
   debug: var=master_created
   when: debug_master or master_created is failed
 

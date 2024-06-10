@@ -60,8 +60,7 @@
 - import_tasks: cni.yml
   tags:
     - cni
-  when: hostvars[inventory_hostname]['datacenter'] == 'dc1' | bool
-
+    -
 - import_tasks: apparmor.yml
   tags:
     - apparmor
